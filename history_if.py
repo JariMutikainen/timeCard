@@ -3,11 +3,11 @@
 # previous working day is sent ino this interface to be appended into the
 # end of the existing history file for future reference.
 
-#from working_day import WorkingDay
-import working_day
-import jsonpickle
 
-class HistoryInterface():
+class HistoryInterface:
+
+    def __init__(self):
+        self.history_list =[]
 
     def append_working_day(self, w_day):
         print('\nAppending the following working day into the history file:\n')
@@ -16,6 +16,5 @@ class HistoryInterface():
 if __name__ == '__main__':
     # Testing
     #hi = HistoryInterface()
-    wh = working_day.WorkingDay()
-    print(wh)
     #hi.append_working_day()
+    pass

@@ -3,7 +3,7 @@
 
 import json
 from time import strftime
-#from history_if import HistoryInterface
+from history_if import HistoryInterface
 
 class WorkingDay:
 
@@ -99,18 +99,33 @@ class WorkingDay:
             # The first stamp of a new day.
             # Instantiate a history interface and append the previous working 
             # day into the end of the history file before initializing 'today'.
-            #h1 = HistoryInterface()
-            #h1.append_working_day(self)
+            HistoryInterface().append_working_day(self)
             # Initialize a new working day
-            pass
+            self.date = date_stamp
+            self.now_at_work = True
+            self.morning_balance = self.balance
+            # Subtract the daily target hours from the morning balance.
+            self.dipped_balance = WorkingDay.sub(self.morning_balance, 
+                                                 WorkingDay.TARGET_HOURS)
+            self.balance = self.dipped_balance
+            self.events = [ [time_stamp, 'in', self.balance] ]
+
+    @staticmethod
+    def sub(time1_s, time2_s):
+        '''Returns time1_s - time2_s as a string in the format "02:55"
+           or "-01:17" if the result is negative.
+        '''
+        print(time1_s, time2_s)
+        return '22:33'
+
 
 
 if __name__ == '__main__':
     # Testing
     wd = WorkingDay()
     #wd.dump_working_day()
-    print(wd)
-    #wd.login()
+    #print(wd)
+    wd.login()
     #print(wd)
 
 

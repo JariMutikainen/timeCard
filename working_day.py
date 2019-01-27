@@ -2,10 +2,15 @@
 # of one working day. The data is stored in a json file on the disk.
 
 import jsonpickle
+from time import strftime
+#from history_if import HistoryInterface
 
 class WorkingDay:
 
     TARGET_HOURS = '05:00'
+    TODAY_FILE = 'currently_out.json'
+#    TODAY_FILE = 'currently_in.json'
+#    TODAY_FILE = 'today.json'
 
     def __init__(self):
 #        Keep the out commented lines as a remainder of the data structure.
@@ -47,16 +52,19 @@ class WorkingDay:
             o_string += "\tNo recorded events were found for today."
         return o_string
 
+    def show_working_day(self):
+        print(self)
+
     def dump_working_day(self):
         '''Śtores the data of the working day into the disk.'''
-        with open('today.json', 'w') as fh:
+        with open(WorkingDay.TODAY_FILE, 'w') as fh:
             frozen = jsonpickle.encode(self)
             fh.write(frozen)
 
     def load_working_day(self):
         '''Loads the data of the working day from the disk.'''
         try:
-            with open('today.json', 'r') as fh:
+            with open(WorkingDay.TODAY_FILE, 'r') as fh:
                 contents = fh.read()
                 unfrozen = jsonpickle.decode(contents)
                 self.date = unfrozen.date
@@ -73,13 +81,29 @@ class WorkingDay:
             self.balance = '-05:00'
             self.events = []
 
+    def login(self):
+        self.load_working_day()
+        time_stamp = strftime('%H:%M')
+        date_stamp = strftime('%d.%m.%Y')
+        if self.now_at_work:
+            print("\nCan't log you in, because you are already in.\n")
+            #self.show_working_day()
+            return
+        if date_stamp != self.date:
+            # The first stamp of a new day.
+            # Instantiate a history interface and append the previous working 
+            # day into the end of the history file before initializing 'today'.
+            #h1 = HistoryInterface()
+            #h1.append_working_day(self)
+            # Initialize a new working day
+            pass
 
 
 if __name__ == '__main__':
     # Testing
     wd = WorkingDay()
-#    wd.dump_working_day()
-#    wd = load_working_day()
     print(wd)
+    #wd.login()
+    #print(wd)
 
 

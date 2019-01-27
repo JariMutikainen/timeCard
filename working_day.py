@@ -1,7 +1,7 @@
 # This file defines the class, which contains all the methods and attributes
 # of one working day. The data is stored in a json file on the disk.
 
-import jsonpickle
+import json
 from time import strftime
 #from history_if import HistoryInterface
 
@@ -9,7 +9,7 @@ class WorkingDay:
 
     TARGET_HOURS = '05:00'
     TODAY_FILE = 'currently_out.json'
-#    TODAY_FILE = 'currently_in.json'
+    #TODAY_FILE = 'currently_in.json'
 #    TODAY_FILE = 'today.json'
 
     def __init__(self):
@@ -20,9 +20,9 @@ class WorkingDay:
 #        self.dipped_balance = '-03:35'
 #        self.balance = '01:35'
 #        self.events = [ ('07:03', 'in', '-03:35'), 
-#                        ('11:33', 'out', '01:35'),
+#                        ('11:33', 'out', '01:35'), 
 #                        ('12:00', 'in', '01:35') ]
-        # jsonpickle needs the following 'empty' placeholders:
+        # json needs the following 'empty' placeholders:
         self.date = ''
         self.now_at_work = None
         self.morning_balance = ''
@@ -58,21 +58,27 @@ class WorkingDay:
     def dump_working_day(self):
         '''Śtores the data of the working day into the disk.'''
         with open(WorkingDay.TODAY_FILE, 'w') as fh:
-            frozen = jsonpickle.encode(self)
-            fh.write(frozen)
+            frozen = {}
+            
+            frozen['date']              = self.date
+            frozen['now_at_work']       = self.now_at_work
+            frozen['morning_balance']   = self.morning_balance
+            frozen['dipped_balance']    = self.dipped_balance
+            frozen['balance']           = self.balance
+            frozen['events']            = self.events
+            json.dump(frozen, fh, indent=4, separators=(',', ': '))
 
     def load_working_day(self):
         '''Loads the data of the working day from the disk.'''
         try:
             with open(WorkingDay.TODAY_FILE, 'r') as fh:
-                contents = fh.read()
-                unfrozen = jsonpickle.decode(contents)
-                self.date = unfrozen.date
-                self.now_at_work = unfrozen.now_at_work
-                self.morning_balance = unfrozen.morning_balance
-                self.dipped_balance = unfrozen.dipped_balance
-                self.balance = unfrozen.balance
-                self.events = unfrozen.events
+                unfrozen = json.load(fh)
+                self.date            = unfrozen['date']
+                self.now_at_work     = unfrozen['now_at_work']
+                self.morning_balance = unfrozen['morning_balance']   
+                self.dipped_balance  = unfrozen['dipped_balance']
+                self.balance         = unfrozen['balance']
+                self.events          = unfrozen['events'][:]
         except FileNotFoundError:
             self.date = '17.06.1964'
             self.now_at_work = False
@@ -102,6 +108,7 @@ class WorkingDay:
 if __name__ == '__main__':
     # Testing
     wd = WorkingDay()
+    #wd.dump_working_day()
     print(wd)
     #wd.login()
     #print(wd)

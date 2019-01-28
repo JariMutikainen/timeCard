@@ -4,6 +4,7 @@
 import json
 from time import strftime
 from history_if import HistoryInterface
+from hhmm import HhMm # Self made time format of 'HH:MM' - like '03:45'
 
 class WorkingDay:
 
@@ -105,27 +106,19 @@ class WorkingDay:
             self.now_at_work = True
             self.morning_balance = self.balance
             # Subtract the daily target hours from the morning balance.
-            self.dipped_balance = WorkingDay.sub(self.morning_balance, 
-                                                 WorkingDay.TARGET_HOURS)
+            t_morning = HhMm(self.morning_balance)
+            t_target = HhMm(WorkingDay.TARGET_HOURS)
+            self.dipped_balance = str(t_morning - t_target)
             self.balance = self.dipped_balance
             self.events = [ [time_stamp, 'in', self.balance] ]
-
-    @staticmethod
-    def sub(time1_s, time2_s):
-        '''Returns time1_s - time2_s as a string in the format "02:55"
-           or "-01:17" if the result is negative.
-        '''
-        print(time1_s, time2_s)
-        return '22:33'
-
 
 
 if __name__ == '__main__':
     # Testing
     wd = WorkingDay()
     #wd.dump_working_day()
-    #print(wd)
+    print(wd)
     wd.login()
-    #print(wd)
+    print(wd)
 
 

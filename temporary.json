@@ -1,6 +1,6 @@
 {
     "date": "29.01.2019",
-    "now_at_work": false,
+    "now_at_work": true,
     "morning_balance": "02:35",
     "dipped_balance": "-02:25",
     "balance": "01:35",
@@ -13,6 +13,11 @@
         [
             "11:03",
             "out",
+            "01:35"
+        ],
+        [
+            "10:32",
+            "in",
             "01:35"
         ]
     ]

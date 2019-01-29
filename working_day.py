@@ -9,8 +9,9 @@ from hhmm import HhMm # Self made time format of 'HH:MM' - like '03:45'
 class WorkingDay:
 
     TARGET_HOURS = '05:00'
-    TODAY_FILE = 'currently_out.json'
-    #TODAY_FILE = 'currently_in.json'
+    FILE_OUT = 'temporary.json'
+    #FILE_IN = 'currently_in.json'
+    FILE_IN = 'currently_out.json'
 #    TODAY_FILE = 'today.json'
 
     def __init__(self):
@@ -58,7 +59,7 @@ class WorkingDay:
 
     def dump_working_day(self):
         '''Śtores the data of the working day into the disk.'''
-        with open(WorkingDay.TODAY_FILE, 'w') as fh:
+        with open(WorkingDay.FILE_OUT, 'w') as fh:
             frozen = {}
             
             frozen['date']              = self.date
@@ -72,7 +73,7 @@ class WorkingDay:
     def load_working_day(self):
         '''Loads the data of the working day from the disk.'''
         try:
-            with open(WorkingDay.TODAY_FILE, 'r') as fh:
+            with open(WorkingDay.FILE_IN, 'r') as fh:
                 unfrozen = json.load(fh)
                 self.date            = unfrozen['date']
                 self.now_at_work     = unfrozen['now_at_work']
@@ -97,7 +98,7 @@ class WorkingDay:
             #self.show_working_day()
             return
         if date_stamp != self.date:
-            # The first stamp of a new day.
+            # The first time stamp of a new day.
             # Instantiate a history interface and append the previous working 
             # day into the end of the history file before initializing 'today'.
             HistoryInterface().append_working_day(self)
@@ -111,13 +112,20 @@ class WorkingDay:
             self.dipped_balance = str(t_morning - t_target)
             self.balance = self.dipped_balance
             self.events = [ [time_stamp, 'in', self.balance] ]
+            self.dump_working_day()
+        else:
+            # A new login at an already existing day
+            self.now_at_work = True
+            self.events += [ [time_stamp, 'in', self.balance] ]
+            self.dump_working_day()
+
 
 
 if __name__ == '__main__':
     # Testing
     wd = WorkingDay()
     #wd.dump_working_day()
-    print(wd)
+    #print(wd)
     wd.login()
     print(wd)
 

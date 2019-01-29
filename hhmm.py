@@ -22,24 +22,23 @@ class HhMm:
                                  f'- not "{hhmm}"')
 
     def __repr__(self):
-        if self.negative:
-            return f'-{self.hh:0>2d}:{self.mm:0>2d}'
-        return f'{self.hh:0>2d}:{self.mm:0>2d}'
+        sign_str = '-' if self.negative else ''
+        return sign_str + f'{self.hh:0>2d}:{self.mm:0>2d}'
 
     def __add__(self, other):
         out = HhMm()
         out.minutes = self.minutes + other.minutes
         out.negative = bool(out.minutes < 0)
-        out.mm = abs(out.minutes) % 60
-        out.hh = (abs(out.minutes) - out.mm) // 60
+        out.hh = abs(out.minutes) // 60
+        out.mm = abs(out.minutes) - out.hh * 60
         return out
 
     def __sub__(self, other):
         out = HhMm()
         out.minutes = self.minutes - other.minutes
         out.negative = bool(out.minutes < 0)
-        out.mm = abs(out.minutes) % 60
-        out.hh = (abs(out.minutes) - out.mm) // 60
+        out.hh = abs(out.minutes) // 60
+        out.mm = abs(out.minutes) - out.hh * 60
         return out
 
     def __lt__(self, other):

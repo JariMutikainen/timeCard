@@ -2,16 +2,16 @@
     "date": "26.01.2019",
     "now_at_work": true,
     "morning_balance": "02:35",
-    "dipped_balance": "-03:35",
+    "dipped_balance": "-02:25",
     "balance": "01:35",
     "events": [
         [
             "07:03",
             "in",
-            "-03:35"
+            "-02:25"
         ],
         [
-            "11:33",
+            "11:03",
             "out",
             "01:35"
         ],

@@ -10,8 +10,8 @@ class WorkingDay:
 
     TARGET_HOURS = '05:00'
     FILE_OUT = 'temporary.json'
-    #FILE_IN = 'currently_in.json'
-    FILE_IN = 'currently_out.json'
+    FILE_IN = 'currently_in.json'
+    #FILE_IN = 'currently_out.json'
 #    TODAY_FILE = 'today.json'
 
     def __init__(self):
@@ -39,9 +39,13 @@ class WorkingDay:
         o_string += f'''
         Date: {self.date}
         Now at work: {self.now_at_work}
-        Morning balance: {self.morning_balance}
-        Dipped balance: {self.dipped_balance}\t(subtracted target hours)
-        Current balance: {self.balance}
+        Morning Balance: {self.morning_balance}
+            The target number of the working hours per day = ({WorkingDay.TARGET_HOURS})
+            must be subtracted from the Morning Balance
+            when making the 1st login of the day. This results in the 
+            Dipped Balance - the new start balance for the new working day.
+
+        Dipped Balance: {self.dipped_balance}\t(After subtracting the target hours)
         '''
         o_string += '\n'
         if self.events:
@@ -49,9 +53,11 @@ class WorkingDay:
                 time, direction, balance = event
                 o_string += f'\tAt {time} logged {direction: >3s} -> '
                 o_string += f'Balance = {balance}\n'
+            o_string += f'\n\tCurrent Balance: {self.balance}\n'
             o_string += '\n' + '-' * 50
         else:
-            o_string += "\tNo recorded events were found for today."
+            o_string += "\tNo recorded events were found for today.\n"
+
         return o_string
 
     def show_working_day(self):
@@ -119,14 +125,39 @@ class WorkingDay:
             self.events += [ [time_stamp, 'in', self.balance] ]
             self.dump_working_day()
 
+    def logout(self):
+        self.load_working_day()
+        time_stamp = strftime('%H:%M')
+        date_stamp = strftime('%d.%m.%Y')
+        if not self.now_at_work:
+            print("\nCan't log you out, because you are already out.\n")
+            self.show_working_day()
+            return
+        if date_stamp != self.date:
+            print("You can't start a new working day by making a logout.\n"
+                  "Did you forget to logout yesterday?")
+            self.show_working_day()
+            return
+        self.now_at_work = False
+        # We have to retrieve the latest login time from the self.events
+        # to be able to determine, how many hours to add into the balance
+        # at this logout moment.
+        last_login_time = self.events[-1][0]
+        t1 = HhMm(last_login_time)
+        t2 = HhMm(self.balance)
+        t3 = HhMm(time_stamp)
+        print(f'last-login: {t1}, balance before: {t2}, time stamp: {t3}')
+        self.balance = str(t2 + (t3 - t1))
+        print(f'Balance after. {self.balance}')
 
 
 if __name__ == '__main__':
     # Testing
     wd = WorkingDay()
     #wd.dump_working_day()
-    #print(wd)
-    wd.login()
+    print(wd)
+    #wd.login()
+    wd.logout()
     print(wd)
 
 

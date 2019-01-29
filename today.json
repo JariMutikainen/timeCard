@@ -1,1 +1,0 @@
-{"py/object": "__main__.WorkingDay", "balance": "01:35", "date": "26.01.2019", "dipped_balance": "-03:35", "events": [{"py/tuple": ["07:03", "in", "-03:35"]}, {"py/tuple": ["11:33", "out", "01:35"]}, {"py/tuple": ["12:00", "in", "01:35"]}], "morning_balance": "02:35", "now_at_work": true}

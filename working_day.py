@@ -1,11 +1,18 @@
 # This file defines the class, which contains all the methods and attributes
 # of one working day. The data is stored in a json file on the disk.
 
-import jsonpickle
+import json
+from time import strftime
+from history_if import HistoryInterface
+from hhmm import HhMm # Self made time format of 'HH:MM' - like '03:45'
 
 class WorkingDay:
 
     TARGET_HOURS = '05:00'
+    FILE_OUT = 'temporary.json'
+    #FILE_IN = 'currently_in.json'
+    FILE_IN = 'currently_out.json'
+#    TODAY_FILE = 'today.json'
 
     def __init__(self):
 #        Keep the out commented lines as a remainder of the data structure.
@@ -15,9 +22,9 @@ class WorkingDay:
 #        self.dipped_balance = '-03:35'
 #        self.balance = '01:35'
 #        self.events = [ ('07:03', 'in', '-03:35'), 
-#                        ('11:33', 'out', '01:35'),
+#                        ('11:33', 'out', '01:35'), 
 #                        ('12:00', 'in', '01:35') ]
-        # jsonpickle needs the following 'empty' placeholders:
+        # json needs the following 'empty' placeholders:
         self.date = ''
         self.now_at_work = None
         self.morning_balance = ''
@@ -47,24 +54,33 @@ class WorkingDay:
             o_string += "\tNo recorded events were found for today."
         return o_string
 
+    def show_working_day(self):
+        print(self)
+
     def dump_working_day(self):
         '''Śtores the data of the working day into the disk.'''
-        with open('today.json', 'w') as fh:
-            frozen = jsonpickle.encode(self)
-            fh.write(frozen)
+        with open(WorkingDay.FILE_OUT, 'w') as fh:
+            frozen = {}
+            
+            frozen['date']              = self.date
+            frozen['now_at_work']       = self.now_at_work
+            frozen['morning_balance']   = self.morning_balance
+            frozen['dipped_balance']    = self.dipped_balance
+            frozen['balance']           = self.balance
+            frozen['events']            = self.events
+            json.dump(frozen, fh, indent=4, separators=(',', ': '))
 
     def load_working_day(self):
         '''Loads the data of the working day from the disk.'''
         try:
-            with open('today.json', 'r') as fh:
-                contents = fh.read()
-                unfrozen = jsonpickle.decode(contents)
-                self.date = unfrozen.date
-                self.now_at_work = unfrozen.now_at_work
-                self.morning_balance = unfrozen.morning_balance
-                self.dipped_balance = unfrozen.dipped_balance
-                self.balance = unfrozen.balance
-                self.events = unfrozen.events
+            with open(WorkingDay.FILE_IN, 'r') as fh:
+                unfrozen = json.load(fh)
+                self.date            = unfrozen['date']
+                self.now_at_work     = unfrozen['now_at_work']
+                self.morning_balance = unfrozen['morning_balance']   
+                self.dipped_balance  = unfrozen['dipped_balance']
+                self.balance         = unfrozen['balance']
+                self.events          = unfrozen['events'][:]
         except FileNotFoundError:
             self.date = '17.06.1964'
             self.now_at_work = False
@@ -73,13 +89,44 @@ class WorkingDay:
             self.balance = '-05:00'
             self.events = []
 
+    def login(self):
+        self.load_working_day()
+        time_stamp = strftime('%H:%M')
+        date_stamp = strftime('%d.%m.%Y')
+        if self.now_at_work:
+            print("\nCan't log you in, because you are already in.\n")
+            #self.show_working_day()
+            return
+        if date_stamp != self.date:
+            # The first time stamp of a new day.
+            # Instantiate a history interface and append the previous working 
+            # day into the end of the history file before initializing 'today'.
+            HistoryInterface().append_working_day(self)
+            # Initialize a new working day
+            self.date = date_stamp
+            self.now_at_work = True
+            self.morning_balance = self.balance
+            # Subtract the daily target hours from the morning balance.
+            t_morning = HhMm(self.morning_balance)
+            t_target = HhMm(WorkingDay.TARGET_HOURS)
+            self.dipped_balance = str(t_morning - t_target)
+            self.balance = self.dipped_balance
+            self.events = [ [time_stamp, 'in', self.balance] ]
+            self.dump_working_day()
+        else:
+            # A new login at an already existing day
+            self.now_at_work = True
+            self.events += [ [time_stamp, 'in', self.balance] ]
+            self.dump_working_day()
+
 
 
 if __name__ == '__main__':
     # Testing
     wd = WorkingDay()
-#    wd.dump_working_day()
-#    wd = load_working_day()
+    #wd.dump_working_day()
+    #print(wd)
+    wd.login()
     print(wd)
 
 

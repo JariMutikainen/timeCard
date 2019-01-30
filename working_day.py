@@ -7,6 +7,15 @@ from history_if import HistoryInterface
 from hhmm import HhMm # Self made time format of 'HH:MM' - like '03:45'
 
 class WorkingDay:
+    '''
+    A WorkingDay consists of logins and logouts. Each time the user logs
+    in or out the time stamp of the event is recored and stored in the
+    list of events. All the instance data is maintained in an external file
+    on the disk. Each time a new event takes place the data is loaded from
+    the disk, the new event is recorded an the data is dumped back into the
+    disk. In addition to the login and logout methods this class offers
+    methods for manually adding or subtracting time from the balance.
+    '''
 
     TARGET_HOURS = '05:00'
     FILE_OUT = 'temporary.json'
@@ -22,7 +31,9 @@ class WorkingDay:
 #        self.dipped_balance = '-03:35'
 #        self.balance = '01:35'
 #        self.events = [ ('07:03', 'in', '-03:35'), 
-#                        ('11:33', 'out', '01:35'), 
+#                        ('11:03', 'out', '01:35'), 
+#                        ('02:00', 'inc', '03:35'),
+#                        ('02:00', 'dec', '01:35'),
 #                        ('12:00', 'in', '01:35') ]
         # json needs the following 'empty' placeholders:
         self.date = ''
@@ -36,11 +47,12 @@ class WorkingDay:
 
     def __repr__(self):
         o_string = '-' * 16 + ' Working day data ' + '-' * 16 + '\n'
+        th = WorkingDay.TARGET_HOURS
         o_string += f'''
         Date: {self.date}
         Now at work: {self.now_at_work}
         Morning Balance: {self.morning_balance}
-            The target number of the working hours per day = ({WorkingDay.TARGET_HOURS})
+            The target number of the working hours per day = ({th})
             must be subtracted from the Morning Balance
             when making the 1st login of the day. This results in the 
             Dipped Balance - the new start balance for the new working day.
@@ -51,8 +63,16 @@ class WorkingDay:
         if self.events:
             for event in self.events:
                 time, direction, balance = event
-                o_string += f'\tAt {time} logged {direction: >3s} -> '
-                o_string += f'Balance = {balance}\n'
+                if direction == 'inc':
+                    o_string += f'\tAdded manually {time}. -> '
+                    o_string += f'Balance = {balance}\n'
+                elif direction == 'dec':
+                    o_string += f'\tSubtracted manually {time}. -> '
+                    o_string += f'Balance = {balance}\n'
+                else:
+                    o_string += f'\tAt {time} logged {direction: >3s} -> '
+                    o_string += f'Balance = {balance}\n'
+
             o_string += f'\n\tCurrent Balance: {self.balance}\n'
             o_string += '\n' + '-' * 50
         else:
@@ -96,6 +116,10 @@ class WorkingDay:
             self.events = []
 
     def login(self):
+        '''
+        This method records the time stamp of a login event and updates
+        the data of the working day on the disk accordingly.
+        '''
         self.load_working_day()
         time_stamp = strftime('%H:%M')
         date_stamp = strftime('%d.%m.%Y')
@@ -126,6 +150,10 @@ class WorkingDay:
             self.dump_working_day()
 
     def logout(self):
+        '''
+        This method records the time stamp of a logout event and updates
+        the data of the working day on the disk accordingly.
+        '''
         self.load_working_day()
         time_stamp = strftime('%H:%M')
         date_stamp = strftime('%d.%m.%Y')
@@ -146,9 +174,29 @@ class WorkingDay:
         t1 = HhMm(last_login_time)
         t2 = HhMm(self.balance)
         t3 = HhMm(time_stamp)
-        print(f'last-login: {t1}, balance before: {t2}, time stamp: {t3}')
+        #print(f'last-login: {t1}, balance before: {t2}, time stamp: {t3}')
         self.balance = str(t2 + (t3 - t1))
-        print(f'Balance after. {self.balance}')
+        #print(f'Balance after. {self.balance}')
+        self.events += [ [time_stamp, 'out', self.balance] ]
+        self.dump_working_day()
+
+    def increment(self, time_s):
+        '''
+        Increments the Current Balance by time_s. time_s is a string in the
+        format '02:34'
+        '''
+        self.balance = str(HhMm(self.balance) + HhMm(time_s))
+        self.events += [ [time_s, 'inc', self.balance] ]
+        self.dump_working_day()
+
+    def decrement(self, time_s):
+        '''
+        Decrements the Current Balance by time_s. time_s is a string in the
+        format '02:34'
+        '''
+        self.balance = str(HhMm(self.balance) - HhMm(time_s))
+        self.events += [ [time_s, 'dec', self.balance] ]
+        self.dump_working_day()
 
 
 if __name__ == '__main__':
@@ -157,7 +205,10 @@ if __name__ == '__main__':
     #wd.dump_working_day()
     print(wd)
     #wd.login()
-    wd.logout()
+    #wd.logout()
+    wd.increment('02:30')
+    print(wd)
+    wd.decrement('01:20')
     print(wd)
 
 

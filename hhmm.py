@@ -1,10 +1,19 @@
-# This file defines a class, which is used for doing math with time stamps.
-# The time stamps can be positive or negative. They are strings in the format
-# 'HH:MM' - i.e. '20:35' or '-02:30'.
+'''
+This file defines a class, which is used for doing math with time stamps.
+The time stamps can be positive or negative. They are strings in the format
+'HH:MM' - i.e. '20:35' or '-02:30'.
+'''
 
 import re
 
 class HhMm:
+    '''
+    This class operates on time stamps in the format 'HH:MM' - i.e. '02:17'
+    for example. It defines methods for ain and subtrackting such time
+    stamps from one another. The time stamps are first converted to
+    minutes. The calculations are made on minutes and finally the
+    result is converted back into the original 'HH:MM'-format.
+    '''
 
     def __init__(self, hhmm='00:00'):
         rex = re.compile(r'^([-])?([0-9]{2}):([0-9]{2})$')
@@ -62,4 +71,3 @@ if __name__ == '__main__':
     print(t2 < t1)
     print(t1 < t2)
     print(t1 != t2)
-

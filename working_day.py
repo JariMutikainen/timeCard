@@ -1,13 +1,21 @@
-# This file defines the class, which contains all the methods and attributes
-# of one working day. The data is stored in a json file on the disk.
+'''
+This file defines the class, which contains all the methods and attributes
+of one working day. The data is stored in a json file on the disk.
+'''
 
 import json
 from time import strftime
+from day import Day
 from history_if import HistoryInterface
 from hhmm import HhMm # Self made time format of 'HH:MM' - like '03:45'
 
-class WorkingDay:
+class WorkingDay(Day):
     '''
+    WorkingDay inherits the __repr__()-method from the Day.
+    It inherits the __init__()-method from the Day, but extends
+    that method by fetching the contents for the instance attributes
+    from the disk.
+
     A WorkingDay consists of logins and logouts. Each time the user logs
     in or out the time stamp of the event is recored and stored in the
     list of events. All the instance data is maintained in an external file
@@ -17,77 +25,20 @@ class WorkingDay:
     methods for manually adding or subtracting time from the balance.
     '''
 
-    TARGET_HOURS = '05:00'
     FILE_OUT = 'temporary.json'
-    FILE_IN = 'currently_in.json'
-    #FILE_IN = 'currently_out.json'
+    #FILE_IN = 'currently_in.json'
+    FILE_IN = 'currently_out.json'
 #    TODAY_FILE = 'today.json'
 
     def __init__(self):
-#        Keep the out commented lines as a remainder of the data structure.
-#        self.date = '26.01.2019'
-#        self.now_at_work = True
-#        self.morning_balance = '02:35'
-#        self.dipped_balance = '-03:35'
-#        self.balance = '01:35'
-#        self.events = [ ('07:03', 'in', '-03:35'), 
-#                        ('11:03', 'out', '01:35'), 
-#                        ('02:00', 'inc', '03:35'),
-#                        ('02:00', 'dec', '01:35'),
-#                        ('12:00', 'in', '01:35') ]
-        # json needs the following 'empty' placeholders:
-        self.date = ''
-        self.now_at_work = None
-        self.morning_balance = ''
-        self.dipped_balance = ''
-        self.balance = ''
-        self.events = []
-        # Load the data from an external file
-        self.load_working_day()
-
-    def __repr__(self):
-        o_string = '-' * 16 + ' Working day data ' + '-' * 16 + '\n'
-        th = WorkingDay.TARGET_HOURS
-        o_string += f'''
-        Date: {self.date}
-        Now at work: {self.now_at_work}
-        Morning Balance: {self.morning_balance}
-            The target number of the working hours per day = ({th})
-            must be subtracted from the Morning Balance
-            when making the 1st login of the day. This results in the 
-            Dipped Balance - the new start balance for the new working day.
-
-        Dipped Balance: {self.dipped_balance}\t(After subtracting the target hours)
-        '''
-        o_string += '\n'
-        if self.events:
-            for event in self.events:
-                time, direction, balance = event
-                if direction == 'inc':
-                    o_string += f'\tAdded manually {time}. -> '
-                    o_string += f'Balance = {balance}\n'
-                elif direction == 'dec':
-                    o_string += f'\tSubtracted manually {time}. -> '
-                    o_string += f'Balance = {balance}\n'
-                else:
-                    o_string += f'\tAt {time} logged {direction: >3s} -> '
-                    o_string += f'Balance = {balance}\n'
-
-            o_string += f'\n\tCurrent Balance: {self.balance}\n'
-            o_string += '\n' + '-' * 50
-        else:
-            o_string += "\tNo recorded events were found for today.\n"
-
-        return o_string
-
-    def show_working_day(self):
-        print(self)
+        super().__init__()
+        self.load_working_day() # Load the data from an external file
 
     def dump_working_day(self):
         '''Śtores the data of the working day into the disk.'''
         with open(WorkingDay.FILE_OUT, 'w') as fh:
             frozen = {}
-            
+
             frozen['date']              = self.date
             frozen['now_at_work']       = self.now_at_work
             frozen['morning_balance']   = self.morning_balance
@@ -103,7 +54,7 @@ class WorkingDay:
                 unfrozen = json.load(fh)
                 self.date            = unfrozen['date']
                 self.now_at_work     = unfrozen['now_at_work']
-                self.morning_balance = unfrozen['morning_balance']   
+                self.morning_balance = unfrozen['morning_balance']
                 self.dipped_balance  = unfrozen['dipped_balance']
                 self.balance         = unfrozen['balance']
                 self.events          = unfrozen['events'][:]
@@ -125,11 +76,11 @@ class WorkingDay:
         date_stamp = strftime('%d.%m.%Y')
         if self.now_at_work:
             print("\nCan't log you in, because you are already in.\n")
-            #self.show_working_day()
+            self.show_working_day()
             return
         if date_stamp != self.date:
             # The first time stamp of a new day.
-            # Instantiate a history interface and append the previous working 
+            # Instantiate a history interface and append the previous working
             # day into the end of the history file before initializing 'today'.
             HistoryInterface().append_working_day(self)
             # Initialize a new working day
@@ -138,16 +89,18 @@ class WorkingDay:
             self.morning_balance = self.balance
             # Subtract the daily target hours from the morning balance.
             t_morning = HhMm(self.morning_balance)
-            t_target = HhMm(WorkingDay.TARGET_HOURS)
+            t_target = HhMm(Day.TARGET_HOURS)
             self.dipped_balance = str(t_morning - t_target)
             self.balance = self.dipped_balance
             self.events = [ [time_stamp, 'in', self.balance] ]
             self.dump_working_day()
+            self.show_working_day()
         else:
             # A new login at an already existing day
             self.now_at_work = True
             self.events += [ [time_stamp, 'in', self.balance] ]
             self.dump_working_day()
+            self.show_working_day()
 
     def logout(self):
         '''
@@ -177,8 +130,9 @@ class WorkingDay:
         #print(f'last-login: {t1}, balance before: {t2}, time stamp: {t3}')
         self.balance = str(t2 + (t3 - t1))
         #print(f'Balance after. {self.balance}')
-        self.events += [ [time_stamp, 'out', self.balance] ]
+        self.events += [[time_stamp, 'out', self.balance]]
         self.dump_working_day()
+        self.show_working_day()
 
     def increment(self, time_s):
         '''
@@ -186,8 +140,9 @@ class WorkingDay:
         format '02:34'
         '''
         self.balance = str(HhMm(self.balance) + HhMm(time_s))
-        self.events += [ [time_s, 'inc', self.balance] ]
+        self.events += [[time_s, 'inc', self.balance]]
         self.dump_working_day()
+        self.show_working_day()
 
     def decrement(self, time_s):
         '''
@@ -195,20 +150,19 @@ class WorkingDay:
         format '02:34'
         '''
         self.balance = str(HhMm(self.balance) - HhMm(time_s))
-        self.events += [ [time_s, 'dec', self.balance] ]
+        self.events += [[time_s, 'dec', self.balance]]
         self.dump_working_day()
+        self.show_working_day()
 
 
 if __name__ == '__main__':
     # Testing
     wd = WorkingDay()
     #wd.dump_working_day()
-    print(wd)
-    #wd.login()
+    #print(wd)
+    wd.login()
     #wd.logout()
-    wd.increment('02:30')
-    print(wd)
-    wd.decrement('01:20')
-    print(wd)
-
-
+    #wd.increment('02:30')
+    #print(wd)
+    #wd.decrement('01:20')
+    #print(wd)

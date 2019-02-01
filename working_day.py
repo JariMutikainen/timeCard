@@ -159,7 +159,7 @@ if __name__ == '__main__':
     # Testing
     wd = WorkingDay()
     #wd.dump_working_day()
-    #print(wd)
+    print(wd)
     wd.login()
     #wd.logout()
     #wd.increment('02:30')

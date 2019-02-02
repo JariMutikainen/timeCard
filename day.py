@@ -58,3 +58,40 @@ class Day:
         '''Prints out the data of the working day.'''
         print(self)
 
+    def dict_to_day(self, working_day):
+        ''' Converts a dictionary of a working day into
+        an object of the class Day. More often than not this dictionary
+        has been loaded from an external .json-file.
+        '''
+        self.date            = working_day['date']
+        self.now_at_work     = working_day['now_at_work']
+        self.morning_balance = working_day['morning_balance']
+        self.dipped_balance  = working_day['dipped_balance']
+        self.balance         = working_day['balance']
+        self.events          = working_day['events'][:]
+        return self
+
+    def day_to_dict(self):
+        ''' Converts an object of the class Day into a dictionary of a 
+        working day. More often than not this dictionary
+        will be dumped into an external .json-file next.
+        '''
+        working_day = {}
+        working_day['date']              = self.date
+        working_day['now_at_work']       = self.now_at_work
+        working_day['morning_balance']   = self.morning_balance
+        working_day['dipped_balance']    = self.dipped_balance
+        working_day['balance']           = self.balance
+        working_day['events']            = self.events
+        return working_day
+
+if __name__ == '__main__':
+    # Testing
+    d1 = Day()
+    print(d1)
+    d_dict = d1.day_to_dict()
+    print(d_dict)
+    d_dict['date'] = '22.33.4444'
+    d2 = Day()
+    d2.dict_to_day(d_dict)
+    print(d2)

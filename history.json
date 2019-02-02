@@ -36,5 +36,43 @@
                 "06:00"
             ]
         ]
+    },
+    {
+        "date": "29.01.2019",
+        "now_at_work": false,
+        "morning_balance": "02:35",
+        "dipped_balance": "-02:25",
+        "balance": "01:35",
+        "events": [
+            [
+                "07:03",
+                "in",
+                "-02:25"
+            ],
+            [
+                "11:03",
+                "out",
+                "01:35"
+            ]
+        ]
+    },
+    {
+        "date": "29.01.2019",
+        "now_at_work": false,
+        "morning_balance": "02:35",
+        "dipped_balance": "-02:25",
+        "balance": "01:35",
+        "events": [
+            [
+                "07:03",
+                "in",
+                "-02:25"
+            ],
+            [
+                "11:03",
+                "out",
+                "01:35"
+            ]
+        ]
     }
 ]

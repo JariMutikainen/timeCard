@@ -37,14 +37,9 @@ class WorkingDay(Day):
     def dump_working_day(self):
         '''Śtores the data of the working day into the disk.'''
         with open(WorkingDay.FILE_OUT, 'w') as fh:
-            frozen = {}
-
-            frozen['date']              = self.date
-            frozen['now_at_work']       = self.now_at_work
-            frozen['morning_balance']   = self.morning_balance
-            frozen['dipped_balance']    = self.dipped_balance
-            frozen['balance']           = self.balance
-            frozen['events']            = self.events
+            # Make a dict of the working day to be stored in an external
+            # .json-file on the disk.
+            frozen = self.day_to_dict()
             json.dump(frozen, fh, indent=4, separators=(',', ': '))
 
     def load_working_day(self):
@@ -52,12 +47,11 @@ class WorkingDay(Day):
         try:
             with open(WorkingDay.FILE_IN, 'r') as fh:
                 unfrozen = json.load(fh)
-                self.date            = unfrozen['date']
-                self.now_at_work     = unfrozen['now_at_work']
-                self.morning_balance = unfrozen['morning_balance']
-                self.dipped_balance  = unfrozen['dipped_balance']
-                self.balance         = unfrozen['balance']
-                self.events          = unfrozen['events'][:]
+                # unfrozen is a dict containing data of one working day.
+                # Suck that data into the instance self of the class
+                # WorkingDay.
+                self.dict_to_day(unfrozen)
+
         except FileNotFoundError:
             self.date = '17.06.1964'
             self.now_at_work = False
@@ -159,7 +153,7 @@ if __name__ == '__main__':
     # Testing
     wd = WorkingDay()
     #wd.dump_working_day()
-    print(wd)
+    #print(wd)
     wd.login()
     #wd.logout()
     #wd.increment('02:30')

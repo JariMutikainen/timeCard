@@ -51,6 +51,11 @@ class HistoryInterface:
             print(self.a_day)
 
     def append_working_day(self, w_day):
+        '''
+        Loads the history data from the disk. Appends a new working day
+        to that data. Dumps the updated history data back into the disk. 
+        w_day is an instance of the class WorkingDay.
+        '''
         print('\nAppending the following working day into the history file:\n')
         print(w_day)
         self.load_history_data()
@@ -58,13 +63,7 @@ class HistoryInterface:
             # Remove the oldest day to make room for the newest one
             self.history_list.pop(0)
         # Make a dict of the new day to be appended into self.history_list
-        working_day = {}
-        working_day['date']              = w_day.date
-        working_day['now_at_work']       = w_day.now_at_work
-        working_day['morning_balance']   = w_day.morning_balance
-        working_day['dipped_balance']    = w_day.dipped_balance
-        working_day['balance']           = w_day.balance
-        working_day['events']            = w_day.events
+        working_day = w_day.day_to_dict()
         self.history_list.append(working_day)
         self.dump_history_data()
 

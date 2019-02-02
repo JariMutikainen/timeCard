@@ -25,10 +25,11 @@ class WorkingDay(Day):
     methods for manually adding or subtracting time from the balance.
     '''
 
-    FILE_OUT = 'temporary.json'
+    #FILE_OUT = 'temporary.json'
     #FILE_IN = 'currently_in.json'
-    FILE_IN = 'currently_out.json'
-#    TODAY_FILE = 'today.json'
+    #FILE_IN = 'currently_out.json'
+    FILE_IN = 'today.json'
+    FILE_OUT = 'today.json'
 
     def __init__(self):
         super().__init__()
@@ -56,8 +57,8 @@ class WorkingDay(Day):
             self.date = '17.06.1964'
             self.now_at_work = False
             self.morning_balance = '00:00'
-            self.dipped_balance = '-05:00'
-            self.balance = '-05:00'
+            self.dipped_balance = '00:00'
+            self.balance = '00:00'
             self.events = []
 
     def login(self):

@@ -11,6 +11,10 @@ the target the difference is added to the balance. The balance can be either
 negative or positive. Normally the boss of the office insists, that the
 balance should be kept positive.'''
 
+import sys
+from history_if import HistoryInterface
+from working_day import WorkingDay
+
 class Menu:
     '''Displays the menu actions available. Gets the user input. Invokes
     the action selected by the user.'''
@@ -28,6 +32,7 @@ class Menu:
         self.answ = 'foo'
 
     def get_user_input(self):
+        '''Prompts the user for next action until a valid answer is given.'''
         while self.answ not in self.actions.keys():
             print('''
                 Select one of the following actions:
@@ -43,21 +48,62 @@ class Menu:
             self.answ = input()
 
     def take_action(self):
+        '''Turns the user's choice into action.'''
         action = self.actions[self.answ]
         action()
+        self.answ = 'foo' # Prevent the program from going crazy.
 
+    def login(self):
+        '''Generates a time stamp and logs the user in.'''
+        print('The working day summary after the Log In is as follows:')
+        WorkingDay().login()
 
-            def login,
-            def logout,
-            def show_day,
-            def show_history,
-            def add_hours,
-            def subtract_hours,
-            def quit
+    def logout(self):
+        '''Generates a time stamp and logs the user out.'''
+        print('The working day summary after the Log Out is as follows:')
+        WorkingDay().logout()
+
+    def show_day(self):
+        '''Shows the data of the current working day.'''
+        WorkingDay().show_working_day()
+
+    def show_history(self):
+        '''Shows the data collected into the history file.'''
+        HistoryInterface().show_history_data()
+
+    def add_hours(self):
+        '''Provides the user with an opportunity to manually increase
+           the current working hour balance.'''
+        time_s = input('How much time do you want to add to your balance?\n'
+                       'Use the format HH:MM - i.e. 01:35 for example: ')
+        print('The working day summary after the Addition is as follows:')
+        WorkingDay().increment(time_s)
+
+    def subtract_hours(self):
+        '''Provides the user with an opportunity to manually decrease
+           the current working hour balance.'''
+        time_s = input('How much time '
+                       'do you want to subtract from your balance?\n'
+                       'Use the format HH:MM - i.e. 01:35 for example: ')
+        print('The working day summary after the Subtraction is as follows:')
+        WorkingDay().decrement(time_s)
+
+    def quit(self):
+        '''Quits the program.'''
+        sys.exit()
+
+    def run_program(self):
+        '''Runs the program in an infinite loop - until the user selects
+           to quit.'''
+        while True:
+            self.get_user_input()
+            self.take_action()
+
 
 
 if __name__ == '__main__':
-    # Testing
     m1 = Menu()
-    m1.get_user_input()
-    m1.take_action()
+    m1.run_program()
+    # Testing
+    #m1.get_user_input()
+    #m1.take_action()

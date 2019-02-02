@@ -56,8 +56,8 @@ class HistoryInterface:
         to that data. Dumps the updated history data back into the disk. 
         w_day is an instance of the class WorkingDay.
         '''
-        print('\nAppending the following working day into the history file:\n')
-        print(w_day)
+        #print('\nAppending the following working day into the history file:\n')
+        #print(w_day)
         self.load_history_data()
         if len(self.history_list) >= HistoryInterface.MAX_DAYS:
             # Remove the oldest day to make room for the newest one

@@ -15,14 +15,10 @@ class Day:
         # Fill in some dummy data 
         self.date = '01.01.2000'
         self.now_at_work = False
-        self.morning_balance = '06:00'
-        self.dipped_balance = '01:00'
-        self.balance = '06:00'
-        self.events = [
-            ['07:00', 'in', '01:00'],
-            ['12:00', 'out', '06:00'],
-            
-        ]
+        self.morning_balance = '00:00'
+        self.dipped_balance = '00:00'
+        self.balance = '00:00'
+        self.events = []
 
     def __repr__(self):
         o_string = '-' * 16 + ' Single day data ' + '-' * 16 + '\n'

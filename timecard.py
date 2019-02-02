@@ -46,6 +46,7 @@ class Menu:
                 Quit             = 'q'
                 --------------------------> ''', end='')
             self.answ = input()
+            print('') # An empty line
 
     def take_action(self):
         '''Turns the user's choice into action.'''
@@ -55,16 +56,17 @@ class Menu:
 
     def login(self):
         '''Generates a time stamp and logs the user in.'''
-        print('The working day summary after the Log In is as follows:')
+        print('\nThe working day summary after the Log In is as follows:')
         WorkingDay().login()
 
     def logout(self):
         '''Generates a time stamp and logs the user out.'''
-        print('The working day summary after the Log Out is as follows:')
+        print('\nThe working day summary after the Log Out is as follows:')
         WorkingDay().logout()
 
     def show_day(self):
         '''Shows the data of the current working day.'''
+        print('\nThe working day summary is as follows:')
         WorkingDay().show_working_day()
 
     def show_history(self):
@@ -76,7 +78,7 @@ class Menu:
            the current working hour balance.'''
         time_s = input('How much time do you want to add to your balance?\n'
                        'Use the format HH:MM - i.e. 01:35 for example: ')
-        print('The working day summary after the Addition is as follows:')
+        print('\nThe working day summary after the Addition is as follows:')
         WorkingDay().increment(time_s)
 
     def subtract_hours(self):
@@ -85,7 +87,7 @@ class Menu:
         time_s = input('How much time '
                        'do you want to subtract from your balance?\n'
                        'Use the format HH:MM - i.e. 01:35 for example: ')
-        print('The working day summary after the Subtraction is as follows:')
+        print('\nThe working day summary after the Subtraction is as follows:')
         WorkingDay().decrement(time_s)
 
     def quit(self):

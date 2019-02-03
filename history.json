@@ -6,5 +6,24 @@
         "dipped_balance": "00:00",
         "balance": "00:00",
         "events": []
+    },
+    {
+        "date": "02.02.2019",
+        "now_at_work": false,
+        "morning_balance": "00:00",
+        "dipped_balance": "-05:00",
+        "balance": "-04:10",
+        "events": [
+            [
+                "17:45",
+                "in",
+                "-05:00"
+            ],
+            [
+                "18:35",
+                "out",
+                "-04:10"
+            ]
+        ]
     }
 ]

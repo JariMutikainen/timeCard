@@ -33,6 +33,7 @@ class Menu:
 
     def get_user_input(self):
         '''Prompts the user for next action until a valid answer is given.'''
+        self.answ = 'foo' # Soon to be overwritten by the user input.
         while self.answ not in self.actions.keys():
             print('''
                 Select one of the following actions:
@@ -52,7 +53,6 @@ class Menu:
         '''Turns the user's choice into action.'''
         action = self.actions[self.answ]
         action()
-        self.answ = 'foo' # Prevent the program from going crazy.
 
     def login(self):
         '''Generates a time stamp and logs the user in.'''

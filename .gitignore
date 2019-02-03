@@ -106,3 +106,6 @@ venv.bak/
 #vim backup files
 *~
 
+# The two files, that keep changing on the daily basis
+history.json
+today.json

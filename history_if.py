@@ -34,7 +34,7 @@ class HistoryInterface:
 
     def dump_history_data(self):
         '''Saves history data into the disk'''
-        with open(HistoryInterface.HISTORY_FILE, 'a') as fh:
+        with open(HistoryInterface.HISTORY_FILE, 'w') as fh:
             json.dump(self.history_list, fh, indent=4, separators=(',', ': '))
 
     def show_history_data(self):
@@ -45,30 +45,25 @@ class HistoryInterface:
             return
         for i, working_day in enumerate(self.history_list):
             # working_day is a dict containing data of one working day.
-            self.a_day.date            = working_day['date']
-            self.a_day.now_at_work     = working_day['now_at_work']
-            self.a_day.morning_balance = working_day['morning_balance']
-            self.a_day.dipped_balance  = working_day['dipped_balance']
-            self.a_day.balance         = working_day['balance']
-            self.a_day.events          = working_day['events'][:]
+            # Suck that data into the instance self.a_day of the class Day.
+            self.a_day.dict_to_day(working_day)
             print(f'History day number {i}:')
             print(self.a_day)
 
     def append_working_day(self, w_day):
-        print('\nAppending the following working day into the history file:\n')
-        print(w_day)
+        '''
+        Loads the history data from the disk. Appends a new working day
+        to that data. Dumps the updated history data back into the disk. 
+        w_day is an instance of the class WorkingDay.
+        '''
+        #print('\nAppending the following working day into the history file:\n')
+        #print(w_day)
         self.load_history_data()
         if len(self.history_list) >= HistoryInterface.MAX_DAYS:
             # Remove the oldest day to make room for the newest one
             self.history_list.pop(0)
         # Make a dict of the new day to be appended into self.history_list
-        working_day = {}
-        working_day['date']              = w_day.date
-        working_day['now_at_work']       = w_day.now_at_work
-        working_day['morning_balance']   = w_day.morning_balance
-        working_day['dipped_balance']    = w_day.dipped_balance
-        working_day['balance']           = w_day.balance
-        working_day['events']            = w_day.events
+        working_day = w_day.day_to_dict()
         self.history_list.append(working_day)
         self.dump_history_data()
 

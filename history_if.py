@@ -18,7 +18,7 @@ class HistoryInterface:
     '''
     HISTORY_FILE = 'history.json'
     # The maximum number of working days stored in the history file:
-    MAX_DAYS = 5 
+    MAX_DAYS = 20 
 
     def __init__(self):
         self.history_list = []

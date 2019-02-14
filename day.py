@@ -9,7 +9,7 @@ class Day:
     '''
 
     # The expected number of workin hours per day:
-    TARGET_HOURS = '05:00'
+    TARGET_HOURS = '08:00'
 
     def __init__(self):
         # Fill in some dummy data 

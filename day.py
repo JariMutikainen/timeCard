@@ -14,6 +14,7 @@ class Day:
     def __init__(self):
         # Fill in some dummy data 
         self.date = '01.01.2000'
+        self.day_name = 'Monday'
         self.now_at_work = False
         self.morning_balance = '00:00'
         self.dipped_balance = '00:00'
@@ -23,9 +24,14 @@ class Day:
     def __repr__(self):
         o_string = '-' * 16 + ' Single day data ' + '-' * 16 + '\n'
         dp = self.dipped_balance
-        th = Day.TARGET_HOURS
+        # The TARGET_HOURS of a weekend day is Zero.
+        if self.day_name in ('Saturday', 'Sunday'):
+            th = '00:00'
+        else:
+            th = Day.TARGET_HOURS
         o_string += f'''
         Date: {self.date}
+        {self.day_name}
         Now at work: {self.now_at_work}
         Morning Balance: {self.morning_balance}
         Dipped Balance: {dp}\t(= Morning Balance - {th} hours)
@@ -60,6 +66,7 @@ class Day:
         has been loaded from an external .json-file.
         '''
         self.date            = working_day['date']
+        self.day_name        = working_day['day_name']
         self.now_at_work     = working_day['now_at_work']
         self.morning_balance = working_day['morning_balance']
         self.dipped_balance  = working_day['dipped_balance']
@@ -74,6 +81,7 @@ class Day:
         '''
         working_day = {}
         working_day['date']              = self.date
+        working_day['day_name']          = self.day_name
         working_day['now_at_work']       = self.now_at_work
         working_day['morning_balance']   = self.morning_balance
         working_day['dipped_balance']    = self.dipped_balance

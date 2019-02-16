@@ -69,6 +69,7 @@ class WorkingDay(Day):
         self.load_working_day()
         time_stamp = strftime('%H:%M')
         date_stamp = strftime('%d.%m.%Y')
+        day_name = strftime('%A')
         if self.now_at_work:
             print("\nCan't log you in, because you are already in.\n")
             self.show_working_day()
@@ -80,11 +81,16 @@ class WorkingDay(Day):
             HistoryInterface().append_working_day(self)
             # Initialize a new working day
             self.date = date_stamp
+            self.day_name = day_name
             self.now_at_work = True
             self.morning_balance = self.balance
             # Subtract the daily target hours from the morning balance.
             t_morning = HhMm(self.morning_balance)
-            t_target = HhMm(Day.TARGET_HOURS)
+            # The TARGET_HOURS for a weekend day is Zero.
+            if self.day_name in ('Saturday', 'Sunday'):
+                t_target = HhMm('00:00')
+            else:
+                t_target = HhMm(Day.TARGET_HOURS)
             self.dipped_balance = str(t_morning - t_target)
             self.balance = self.dipped_balance
             self.events = [ [time_stamp, 'in', self.balance] ]

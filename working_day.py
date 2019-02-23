@@ -140,6 +140,7 @@ class WorkingDay(Day):
         Increments the Current Balance by time_s. time_s is a string in the
         format '02:34'
         '''
+        self.load_working_day()
         self.balance = str(HhMm(self.balance) + HhMm(time_s))
         self.events += [[time_s, 'inc', self.balance]]
         self.dump_working_day()
@@ -150,6 +151,7 @@ class WorkingDay(Day):
         Decrements the Current Balance by time_s. time_s is a string in the
         format '02:34'
         '''
+        self.load_working_day()
         self.balance = str(HhMm(self.balance) - HhMm(time_s))
         self.events += [[time_s, 'dec', self.balance]]
         self.dump_working_day()

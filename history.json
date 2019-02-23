@@ -73,5 +73,25 @@
                 "04:25"
             ]
         ]
+    },
+    {
+        "date": "04.02.2019",
+        "day_name": "Friday",
+        "now_at_work": false,
+        "morning_balance": "-04:10",
+        "dipped_balance": "-09:10",
+        "balance": "-07:44",
+        "events": [
+            [
+                "08:28",
+                "in",
+                "-09:10"
+            ],
+            [
+                "09:54",
+                "out",
+                "-07:44"
+            ]
+        ]
     }
 ]

@@ -124,16 +124,29 @@ class WorkingDay(Day):
         # We have to retrieve the latest login time from the self.events
         # to be able to determine, how many hours to add into the balance
         # at this logout moment.
-        last_login_time = self.events[-1][0]
+        #last_login_time = self.events[-1][0]
+        last_login_time = self.get_latest_login()
         t1 = HhMm(last_login_time)
         t2 = HhMm(self.balance)
         t3 = HhMm(time_stamp)
-        #print(f'last-login: {t1}, balance before: {t2}, time stamp: {t3}')
+        print(f'last-login: {t1}, balance before: {t2}, time stamp: {t3}')
         self.balance = str(t2 + (t3 - t1))
-        #print(f'Balance after. {self.balance}')
+        print(f'Balance after. {self.balance}')
         self.events += [[time_stamp, 'out', self.balance]]
         self.dump_working_day()
         self.show_working_day()
+
+    def get_latest_login(self):
+        '''
+        Returns the time stamp of the latest login. The important thing
+        is not to return the last time stamp of the current day but
+        rather the last time stamp of the current day with "in" as
+        the direction. Bug fix 2.3.2019 by Jari M.
+        '''
+        indx = -1
+        while self.events[indx][1] != "in": #events[][1] contains the direction
+            indx -= 1
+        return self.events[indx][0] # events[][0] contains the time stamp
 
     def increment(self, time_s):
         '''
@@ -163,8 +176,8 @@ if __name__ == '__main__':
     wd = WorkingDay()
     #wd.dump_working_day()
     #print(wd)
-    wd.login()
-    #wd.logout()
+    #wd.login()
+    wd.logout()
     #wd.increment('02:30')
     #print(wd)
     #wd.decrement('01:20')
